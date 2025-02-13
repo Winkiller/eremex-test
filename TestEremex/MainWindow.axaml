@@ -2,33 +2,56 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:mxc="https://schemas.eremexcontrols.net/avalonia/charts"
         xmlns:testEremex="clr-namespace:TestEremex"
-        xmlns:mxd="https://schemas.eremexcontrols.net/avalonia/docking"
-
+        xmlns:mxdg="https://schemas.eremexcontrols.net/avalonia/datagrid"
+        xmlns:mxe="https://schemas.eremexcontrols.net/avalonia/editors"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TestEremex.MainWindow"
+        x:Name="TestView"
         Title="TestEremex"
         x:DataType="testEremex:MyViewModel">
     <Window.DataContext>
         <testEremex:MyViewModel />
     </Window.DataContext>
+    <Window.Styles>
+        <Style Selector=":is(mxe|BaseEditor)">
+            <Setter Property="Padding" Value="2,0"/>
+            <Setter Property="MinHeight" Value="23" />
+        </Style>
+    </Window.Styles>
     <Grid RowDefinitions="Auto,*">
-        <StackPanel Orientation="Horizontal">
-            <Button Click="Button_OnClick1">1. Load Layout1</Button>
-            <Button Click="Button_OnClick2">2. Load Layout2</Button>
-            <Button Click="Button_OnClick3">3. Load Layout1 Again(Упс табы пропали)</Button>
-
-            <!--<Button Click="Button_OpenControlsAndSave1">1. Generate and Save Layout1</Button>
-            <Button Click="Button_OpenControlsAndSave2">2. Generate and Save Layout2</Button>-->
-        </StackPanel>
-
-        <mxd:DockManager Grid.Row="1" x:Name="DockControl" mxd:DockManagerSerializer.RestoreBehavior="Default"
-                         BorderThickness="0">
-            <mxd:DockGroup x:Name="DockGroup">
-
-            </mxd:DockGroup>
-        </mxd:DockManager>
+        <Button Command="{Binding LoadData}">LoadSource</Button>
+        <mxdg:DataGridControl Grid.Row="1" ItemsSource="{Binding Items}" RowMinHeight="20" x:Name="GridControl" EditorButtonShowMode="ShowAlways">
+            <mxdg:DataGridControl.Columns>
+                <mxdg:GridColumn FieldName="Id" Header="Id" Width="100" />
+                <mxdg:GridColumn FieldName="Trigger" Header="Выход" Width="100" AllowEditing="True" >
+                    <mxdg:GridColumn.EditorProperties>
+                        <mxe:ComboBoxEditorProperties MinHeight="20" ItemsSource="{Binding  #TestView.((testEremex:MyViewModel)DataContext).Collection}"
+                                                      IsTextEditable="False" >
+                            <mxe:ComboBoxEditorProperties.Buttons>
+                                <mxe:ButtonSettings Content="X" Command="{Binding $parent[testEremex:MainWindow].((testEremex:MyViewModel)DataContext).ClearTest}"/>
+                            </mxe:ComboBoxEditorProperties.Buttons>
+                            <!--<mxe:ComboBoxEditorProperties.Buttons>
+                                <mxe:ButtonSettings Content="X" 
+                                                    Command="{ReflectionBinding $parent[visuals:CellControl].DataControl.DataContext.ClearValueCommand}"/>
+                            </mxe:ComboBoxEditorProperties.Buttons>-->
+                            
+                        </mxe:ComboBoxEditorProperties>
+                    </mxdg:GridColumn.EditorProperties>
+                </mxdg:GridColumn>
+                <mxdg:GridColumn FieldName="Trigger" Header="Выход2" Width="100" AllowEditing="True" >
+                    <mxdg:GridColumn.EditorProperties>
+                        <mxe:ComboBoxEditorProperties MinHeight="20" ItemsSource="{Binding  #TestView.((testEremex:MyViewModel)DataContext).Collection2}"
+                                                      IsTextEditable="False" DisplayMember="Name" ValueMember="Name" >
+                            <mxe:ComboBoxEditorProperties.Buttons>
+                                <mxe:ButtonSettings Content="X" Command="{Binding $parent[testEremex:MainWindow].((testEremex:MyViewModel)DataContext).ClearTest}"/>
+                            </mxe:ComboBoxEditorProperties.Buttons>
+                            
+                        </mxe:ComboBoxEditorProperties>
+                    </mxdg:GridColumn.EditorProperties>
+                </mxdg:GridColumn>
+            </mxdg:DataGridControl.Columns>
+        </mxdg:DataGridControl>
 
     </Grid>
 </Window>
